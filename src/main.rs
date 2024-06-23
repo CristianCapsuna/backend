@@ -22,7 +22,7 @@ async fn main() {
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(render_markdown))
-        .nest_service("/static", ServeDir::new("static/"));
+        .nest_service("/static_files", ServeDir::new("/srv/static_files/"));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .unwrap();
@@ -39,7 +39,7 @@ async fn render_markdown() -> Html<String> {
     let mut cv_html = String::new();
     html::push_html(&mut cv_html, parser);
     let html_wrapper = Html(dioxus_ssr::render_element(rsx! {
-            link { rel: "stylesheet", href: "/static/style.css" }
+            link { rel: "stylesheet", href: "/static_files/style.css" }
             head {
                 title { "About" }
                 link {
@@ -112,7 +112,7 @@ async fn render_markdown() -> Html<String> {
                         dangerous_inner_html: "{cv_html}"
                 }
             }
-            script { src: "/static/mobile_toc_hide_and_show.js" }
+            script { src: "/static_files/mobile_toc_hide_and_show.js" }
         }
     }));
 
